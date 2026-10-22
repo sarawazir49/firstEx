@@ -3,105 +3,101 @@ using System.Text.RegularExpressions;
 
 class Program
 {
-    static void Main(string[] args)
+    static void Main()
     {
         List<string> products = new List<string>();
+
         Console.WriteLine("=== Product List Manager ===");
-        Console.WriteLine("Enter products like CE-400 (type EXIT to finish)\n");
+        Console.WriteLine("Write products like CE-400");
+        Console.WriteLine("Write EXIT to finish");
+        Console.WriteLine();
 
         while (true)
-
         {
             Console.Write("Enter product: ");
-            string input = Console.ReadLine();
+            string input = Console.ReadLine() ?? "";
 
-            // Level 2: Improved Exit Handling
-            string cleanedInput = input.Trim();
+            // remove spaces
+            string clean = input.Trim();
 
-            if (cleanedInput.ToLower() == "exit")
+            // check for exit in any case
+            if (clean.ToLower() == "exit")
             {
                 break;
             }
 
-            // Level 3: Validation
-            if (IsValidProduct(cleanedInput, out string errorMessage))
+            // check if valid
+            if (CheckProduct(clean) == true)
             {
-                products.Add(cleanedInput.ToUpper());
-                Console.WriteLine($"-> Added: {cleanedInput.ToUpper()}");
+                products.Add(clean.ToUpper());
+                Console.WriteLine("Added!");
             }
             else
             {
-                Console.WriteLine($"-> Invalid! {errorMessage}");
+                Console.WriteLine("Invalid! Example valid: CE-400, LABAN-231");
+                Console.WriteLine("Invalid examples: CE400, LABAN-100");
             }
         }
 
-        // Level 1 + 2: Display sorted
-        DisplayProducts(products);
+        // sorting and showing
+        Console.WriteLine();
+        Console.WriteLine("--- Final List ---");
+
+        if (products.Count == 0)
+        {
+            Console.WriteLine("No products");
+        }
+        else
+        {
+            products.Sort();
+
+            for (int i = 0; i < products.Count; i++)
+            {
+                Console.WriteLine((i + 1) + ". " + products[i]);
+            }
+
+            Console.WriteLine("Total: " + products.Count);
+        }
     }
 
-    // Level 3: Method + Regex + TryParse + Defensive Programming
-    static bool IsValidProduct(string product, out string error)
+    // method to check product
+    static bool CheckProduct(string name)
     {
-        error = "";
-
-        if (string.IsNullOrWhiteSpace(product))
+        // check if empty
+        if (name == "" || name == null)
         {
-            error = "Name cannot be empty.";
             return false;
         }
 
-        string pattern = @"^[A-Za-z]+-\d+$";
-        if (!Regex.IsMatch(product, pattern))
+        // check format LETTERS-NUMBER
+        if (Regex.IsMatch(name, @"^[A-Za-z]+-\d+$") == false)
         {
-            error = "Format must be LETTERS-NUMBER (e.g. CE-400, LABAN-231). Examples of invalid: CE400, XX3-480";
             return false;
         }
 
-        string[] parts = product.Split('-');
-        string lettersPart = parts[0];
-        string numbersPart = parts[1];
+        // split into two parts
+        string[] parts = name.Split('-');
+        string numberPart = parts[1];
 
-        // Left side: Letters only (Regex already checked, but for clean code)
-        if (!lettersPart.All(char.IsLetter))
+        int number;
+        bool isNumber = int.TryParse(numberPart, out number);
+
+        if (isNumber == false)
         {
-            error = "Left side must be letters only A-Z.";
             return false;
         }
 
-        // Right side: Numbers + range 200-500
-        if (!int.TryParse(numbersPart, out int number))
+        // number must be between 200 and 500
+        if (number < 200)
         {
-            error = "Right side must be numbers only.";
             return false;
         }
 
-        if (number < 200 || number > 500)
+        if (number > 500)
         {
-            error = $"Number must be between 200 and 500. You entered {number}. Example invalid: LABAN-100";
             return false;
         }
 
         return true;
-    }
-
-    // Clean Code Principle: Method for display
-    static void DisplayProducts(List<string> products)
-    {
-        Console.WriteLine("\n--- Final Result ---");
-
-        if (products.Count == 0)
-        {
-            Console.WriteLine("No products entered.");
-            return;
-        }
-
-        // Level 2: Sorting
-        products.Sort();
-
-        Console.WriteLine($"You entered {products.Count} valid products (sorted A-Z):");
-        for (int i = 0; i < products.Count; i++)
-        {
-            Console.WriteLine($"{i + 1}. {products[i]}");
-        }
     }
 }
