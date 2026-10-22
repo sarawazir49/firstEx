@@ -10,6 +10,7 @@ class Program
         Console.WriteLine("Enter products like CE-400 (type EXIT to finish)\n");
 
         while (true)
+
         {
             Console.Write("Enter product: ");
             string input = Console.ReadLine();
