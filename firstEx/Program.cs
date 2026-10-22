@@ -26,7 +26,6 @@ class Program
             // Level 3: Validation
             if (IsValidProduct(cleanedInput, out string errorMessage))
             {
-                // نخزنها بحروف كبيرة ومرتبة
                 products.Add(cleanedInput.ToUpper());
                 Console.WriteLine($"-> Added: {cleanedInput.ToUpper()}");
             }
@@ -51,8 +50,6 @@ class Program
             return false;
         }
 
-        // Regex: حروف فقط - رقم فقط
-        // مثال: LABAN-231
         string pattern = @"^[A-Za-z]+-\d+$";
         if (!Regex.IsMatch(product, pattern))
         {
@@ -60,7 +57,6 @@ class Program
             return false;
         }
 
-        // نقسمه لقسمين
         string[] parts = product.Split('-');
         string lettersPart = parts[0];
         string numbersPart = parts[1];
