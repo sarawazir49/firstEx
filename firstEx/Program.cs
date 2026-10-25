@@ -1,4 +1,5 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 class Program
@@ -71,6 +72,7 @@ class Program
 
         // check format LETTERS-NUMBER
         if (Regex.IsMatch(name, @"^[A-Za-z]+-\d+$") == false)
+
         {
             return false;
         }
